@@ -158,8 +158,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   jumpForce: 5
-  rb: {fileID: 245106375}
-  isGrounded: 0
 --- !u!50 &245106375
 Rigidbody2D:
   serializedVersion: 4
@@ -311,6 +309,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5abce806cbed7f45af4899b6fdf905e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  colorChangeInterval: 5
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -416,7 +415,7 @@ GameObject:
   - component: {fileID: 1129836333}
   m_Layer: 0
   m_Name: Platform
-  m_TagString: Untagged
+  m_TagString: Platform
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -482,7 +481,7 @@ Transform:
   m_GameObject: {fileID: 1129836330}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.72, y: -7.32, z: 0}
+  m_LocalPosition: {x: 0.85, y: -4.6, z: 0}
   m_LocalScale: {x: 9.94824, y: 1.8659521, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ColorChange : MonoBehaviour
@@ -7,60 +5,46 @@ public class ColorChange : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private PlayerMovement playerMovement;
 
-    private float colorChangeTimer = 0f;
-    private float colorChangeInterval = 5f; // 5 seconds for color change
-    private bool isBlue = true; // Starting color
+    private float colorChangeTimer;
+    [SerializeField] private float colorChangeInterval = 5f; // Time interval for color change
+    private int currentColorIndex; // Index to track the current color
+    private Color[] colors = new Color[] { Color.blue, Color.green }; // Array of colors to switch between
 
-    void Start()
+    private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
         playerMovement = GetComponent<PlayerMovement>();
-        ChangeColor(Color.blue); // Start with blue
+        currentColorIndex = 0; // Start with the first color
+        ChangeColor(colors[currentColorIndex]); // Apply the initial color
     }
 
-    void Update()
+    private void Update()
     {
         colorChangeTimer += Time.deltaTime;
 
+        // Check if it's time to change the color
         if (colorChangeTimer >= colorChangeInterval)
         {
-            // Reset the timer
-            colorChangeTimer = 0f;
-
-            // Switch color
-            if (isBlue)
-            {
-                ChangeColor(Color.green);
-                isBlue = false;
-            }
-            else
-            {
-                ChangeColor(Color.blue);
-                isBlue = true;
-            }
+            colorChangeTimer = 0f; // Reset timer
+            currentColorIndex = (currentColorIndex + 1) % colors.Length; // Move to the next color
+            ChangeColor(colors[currentColorIndex]); // Change to the new color
         }
     }
 
     private void ChangeColor(Color newColor)
     {
-        spriteRenderer.color = newColor;
-        ResetAbilities();
+        spriteRenderer.color = newColor; // Change the sprite's color
 
-        // Ability changes based on color
-        if (newColor == Color.blue)
+        // Check the new color and apply abilities accordingly
+        if (newColor == Color.green)
         {
-            playerMovement.SetSpeed(10f); // Increase speed for blue
+            playerMovement.ModifyMoveSpeed(5f); // Set the move speed for green
+            playerMovement.SetColorAbilities(true); // Enable double jump for green
         }
-        else if (newColor == Color.green)
+        else if (newColor == Color.blue)
         {
-            playerMovement.SetDoubleJump(true); // Enable double jump for green
+            playerMovement.ModifyMoveSpeed(10f); // Increase speed for blue
+            playerMovement.SetColorAbilities(false); // Disable double jump for blue
         }
-    }
-
-    private void ResetAbilities()
-    {
-        // Reset to default abilities
-        playerMovement.SetSpeed(5f);
-        playerMovement.SetDoubleJump(false);
     }
 }
