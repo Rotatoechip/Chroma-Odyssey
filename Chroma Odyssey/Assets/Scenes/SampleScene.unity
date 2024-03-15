@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.35687384, g: 0.6965891, b: 0.72411424, a: 1}
+  m_IndirectSpecularColor: {r: 0.3571563, g: 0.69737685, b: 0.7250215, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -495,7 +495,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 8138a7832e8c76f478a2c8a38e7b44d4, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0

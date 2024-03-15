@@ -1,19 +1,22 @@
 using UnityEngine;
+using System.Collections;
 
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float jumpForce = 15f;
-
     private Rigidbody2D rb;
     private bool canDoubleJump;
-    private bool hasDoubleJumped; // Track if the double jump has been used
-    private bool isGreen; // Track if the player is currently green
+    private bool hasDoubleJumped;
+    private bool canDestroyPlatforms = false;
+    private int groundContactCount = 0;
+    private Vector2 originalSize;
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        originalSize = transform.localScale;
     }
 
     private void Update()
@@ -32,19 +35,13 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump"))
         {
-            if (IsGrounded())
+            if (IsGrounded() || (canDoubleJump && !hasDoubleJumped))
             {
                 Jump();
-                if (isGreen)
+                if (!IsGrounded() && canDoubleJump)
                 {
-                    canDoubleJump = true; // Enable double jump when grounded and green
+                    hasDoubleJumped = true;
                 }
-                hasDoubleJumped = false; // Reset double jump flag
-            }
-            else if (canDoubleJump && !hasDoubleJumped)
-            {
-                Jump();
-                hasDoubleJumped = true; // Set flag to indicate double jump has been used
             }
         }
     }
@@ -52,38 +49,24 @@ public class PlayerMovement : MonoBehaviour
     private void Jump()
     {
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+        if (IsGrounded() && canDoubleJump)
+        {
+            hasDoubleJumped = false; // Reset double jump when grounded and green
+        }
     }
 
     private bool IsGrounded()
     {
-        // Use a raycast or other method to check if the player is grounded
         return groundContactCount > 0;
-    }
-
-    // Use a counter to keep track of how many platforms the player is standing on
-    private int groundContactCount = 0;
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Platform"))
-        {
-            groundContactCount++; // Increment on entering collision with a platform
-        }
-    }
-
-    void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Platform"))
-        {
-            groundContactCount--; // Decrement on exiting collision with a platform
-        }
     }
 
     public void SetColorAbilities(bool doubleJumpEnabled)
     {
-        isGreen = doubleJumpEnabled;
-        canDoubleJump = false; // Reset double jump whenever the color changes
-        hasDoubleJumped = false; // Reset the double jump used flag
+        canDoubleJump = doubleJumpEnabled;
+        if (doubleJumpEnabled)
+        {
+            hasDoubleJumped = false; // Ensure double jump is reset when enabling
+        }
     }
 
     public void ModifyMoveSpeed(float newSpeed)
@@ -91,9 +74,45 @@ public class PlayerMovement : MonoBehaviour
         moveSpeed = newSpeed;
     }
 
-    public void ResetAbilities()
+    public void EnableDestroyPlatforms(bool enable)
     {
-        ModifyMoveSpeed(5f); // Reset move speed to default
-        SetColorAbilities(false); // By default, the player is not green and cannot double jump
+        canDestroyPlatforms = enable;
+        transform.localScale = enable ? originalSize * 1.5f : originalSize; // Adjust size only when enabling platform destruction
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Platform"))
+        {
+            groundContactCount++;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Platform"))
+        {
+            groundContactCount--;
+            if (canDestroyPlatforms)
+            {
+                // Optional: Add a delay or condition to ensure the character can jump off before the platform is destroyed
+                DestroyPlatformAfterDelay(collision.gameObject);
+            }
+        }
+    }
+
+    private void DestroyPlatformAfterDelay(GameObject platform)
+    {
+        // Coroutine to wait for a brief moment before destroying the platform
+        StartCoroutine(DestroyAfterDelay(platform));
+    }
+
+    IEnumerator DestroyAfterDelay(GameObject platform)
+    {
+        yield return new WaitForSeconds(0.1f); // Adjust the delay as needed
+        if (platform != null) // Check if the platform hasn't already been destroyed
+        {
+            Destroy(platform);
+        }
     }
 }
