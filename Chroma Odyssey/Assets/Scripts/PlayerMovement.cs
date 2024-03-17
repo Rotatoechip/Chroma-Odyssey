@@ -98,7 +98,7 @@ public class PlayerMovement : MonoBehaviour
                 // Optional: Add a delay or condition to ensure the character can jump off before the platform is destroyed
                 DestroyPlatformAfterDelay(collision.gameObject);
             }
-        }
+        } 
     }
 
     private void DestroyPlatformAfterDelay(GameObject platform)
