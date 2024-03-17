@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement; // For scene reset
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class PlayerMovement : MonoBehaviour
     private int groundContactCount = 0;
     private Vector2 originalSize;
 
+    [SerializeField] private Transform respawnPoint; // Reference to the respawn point
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -23,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Move();
         JumpInput();
+        CheckForFall(); // Call the fall checking function each frame
     }
 
     private void Move()
@@ -77,7 +81,7 @@ public class PlayerMovement : MonoBehaviour
     public void EnableDestroyPlatforms(bool enable)
     {
         canDestroyPlatforms = enable;
-        transform.localScale = enable ? originalSize * 1.5f : originalSize; // Adjust size only when enabling platform destruction
+        transform.localScale = enable ? originalSize * 1.5f : originalSize;
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -95,24 +99,44 @@ public class PlayerMovement : MonoBehaviour
             groundContactCount--;
             if (canDestroyPlatforms)
             {
-                // Optional: Add a delay or condition to ensure the character can jump off before the platform is destroyed
                 DestroyPlatformAfterDelay(collision.gameObject);
             }
-        } 
+        }
     }
 
     private void DestroyPlatformAfterDelay(GameObject platform)
     {
-        // Coroutine to wait for a brief moment before destroying the platform
         StartCoroutine(DestroyAfterDelay(platform));
     }
 
     IEnumerator DestroyAfterDelay(GameObject platform)
     {
-        yield return new WaitForSeconds(0.1f); // Adjust the delay as needed
-        if (platform != null) // Check if the platform hasn't already been destroyed
+        yield return new WaitForSeconds(0.1f);
+        if (platform != null)
         {
             Destroy(platform);
+        }
+    }
+
+    // Check if the player has fallen below a certain threshold and respawn if so
+    private void CheckForFall()
+    {
+        // Adjust the fall threshold according to your game's level design
+        float fallThreshold = -25f;
+        if (transform.position.y < fallThreshold)
+        {
+            RespawnAtCheckpoint();
+        }
+    }
+
+    // Move the player to the respawn point
+    private void RespawnAtCheckpoint()
+    {
+        if (respawnPoint != null)
+        {
+            transform.position = respawnPoint.position;
+            rb.velocity = Vector2.zero; // Reset velocity to prevent falling motion carryover
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name); // Reload the current scene
         }
     }
 }

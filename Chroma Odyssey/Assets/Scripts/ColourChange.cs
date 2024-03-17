@@ -15,7 +15,7 @@ public class ColorChange : MonoBehaviour
     private Color[] colors = new Color[] { Color.blue, Color.green, Color.yellow, new Color(1f, 0.64f, 0f) }; // Colors including orange
 
     // Unique ability names for each color
-    private string[] abilityNames = { "Swiftboost", "Leapforce", "Timeslow", "Platformsmash" };
+    private string[] abilityNames = { "SwiftBoost", "DoubleLeap", "TimeSlow", "PlatformSmash" };
 
     private void Start()
     {
