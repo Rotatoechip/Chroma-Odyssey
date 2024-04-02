@@ -4,6 +4,8 @@ using UnityEngine.SceneManagement; // For scene reset
 
 public class PlayerMovement : MonoBehaviour
 {
+    public Animator animator;
+
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float jumpForce = 15f;
     private Rigidbody2D rb;
@@ -33,6 +35,8 @@ public class PlayerMovement : MonoBehaviour
     {
         float moveInput = Input.GetAxisRaw("Horizontal");
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
+
+        animator.SetFloat("Speed", Mathf.Abs(moveInput));
     }
 
     private void JumpInput()
