@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro; // Import the TextMeshPro namespace
+using System.Collections;
 
 public class ColorChange : MonoBehaviour
 {
@@ -8,6 +9,7 @@ public class ColorChange : MonoBehaviour
 
     // Add a public field to reference the TextMeshProUGUI component
     public TextMeshProUGUI abilityText;
+    public TextMeshProUGUI countdownText;
 
     private float colorChangeTimer;
     [SerializeField] private float colorChangeInterval = 5f;
@@ -16,6 +18,7 @@ public class ColorChange : MonoBehaviour
 
     // Unique ability names for each color
     private string[] abilityNames = { "SwiftBoost", "DoubleLeap", "TimeSlow", "PlatformSmash" };
+    private bool isCountdownActive = false;
 
     private void Start()
     {
@@ -23,18 +26,43 @@ public class ColorChange : MonoBehaviour
         playerMovement = GetComponent<PlayerMovement>();
         currentColorIndex = 0;
         ChangeColor(colors[currentColorIndex]); // Apply the initial color
+        countdownText.gameObject.SetActive(false);
     }
 
     private void Update()
     {
         colorChangeTimer += Time.deltaTime;
 
+        // Rainbow color change logic
+        float hueValue = Mathf.Repeat(Time.time * 0.1f, 1);
+        countdownText.color = Color.HSVToRGB(hueValue, 1, 1);
+
+        // Start the countdown when there are 3 seconds left
+        if (colorChangeInterval - colorChangeTimer <= 3 && !isCountdownActive)
+        {
+            StartCoroutine(ShowCountdown(3));
+            isCountdownActive = true;
+        }
+
         if (colorChangeTimer >= colorChangeInterval)
         {
             colorChangeTimer = 0f;
             currentColorIndex = (currentColorIndex + 1) % colors.Length;
-            ChangeColor(colors[currentColorIndex]); // Change to the next color
+            ChangeColor(colors[currentColorIndex]);
+            isCountdownActive = false; // Reset the countdown flag
         }
+    }
+
+    IEnumerator ShowCountdown(int seconds)
+    {
+        countdownText.gameObject.SetActive(true);
+        while (seconds > 0)
+        {
+            countdownText.text = $"Colour Change in {seconds}";
+            yield return new WaitForSeconds(1f);
+            seconds--;
+        }
+        countdownText.gameObject.SetActive(false);
     }
 
     private void ChangeColor(Color newColor)

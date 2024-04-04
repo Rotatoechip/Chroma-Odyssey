@@ -9,4 +9,8 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadSceneAsync(1);
     }
+<<<<<<< HEAD
+=======
+
+>>>>>>> 9f9dc06bb849e9048478c576d4520418099de197
 }
