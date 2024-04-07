@@ -12,6 +12,7 @@ public class PlayerMovement : MonoBehaviour
     private bool canDoubleJump;
     private bool hasDoubleJumped;
     private bool canDestroyPlatforms = false;
+    public bool inverseControl = false; // New variable to track inverse control state
     private int groundContactCount = 0;
     private Vector2 originalSize;
 
@@ -34,6 +35,14 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         float moveInput = Input.GetAxisRaw("Horizontal");
+
+        // Check if inverse control is active
+        if (inverseControl)
+        {
+            moveInput *= -1; // Invert the control
+        }
+
+
         rb.velocity = new Vector2(moveInput * moveSpeed, rb.velocity.y);
 
         animator.SetFloat("Speed", Mathf.Abs(moveInput));

@@ -17,7 +17,7 @@ public class ColorChange : MonoBehaviour
     private Color[] colors = new Color[] { Color.blue, Color.green, Color.yellow, new Color(1f, 0.64f, 0f) }; // Colors including orange
 
     // Unique ability names for each color
-    private string[] abilityNames = { "SwiftBoost", "DoubleLeap", "TimeSlow", "PlatformSmash" };
+    private string[] abilityNames = { "SwiftBoost", "DoubleLeap", "InverseControl", "PlatformSmash" };
     private bool isCountdownActive = false;
 
     private void Start()
@@ -71,6 +71,7 @@ public class ColorChange : MonoBehaviour
         // Ensure platform destruction is disabled by default and double jump is reset
         playerMovement.EnableDestroyPlatforms(false);
         playerMovement.SetColorAbilities(false);
+        playerMovement.inverseControl = false; // Ensure inverse control is disabled by default
 
         // Update the ability text and its color to match the character's color
         abilityText.text = abilityNames[currentColorIndex];
@@ -87,7 +88,8 @@ public class ColorChange : MonoBehaviour
         }
         else if (newColor == Color.yellow)
         {
-            playerMovement.ModifyMoveSpeed(2f);
+            // Enable the inverse control ability
+            playerMovement.inverseControl = true;
         }
         else if (newColor == new Color(1f, 0.64f, 0f)) // Orange
         {
